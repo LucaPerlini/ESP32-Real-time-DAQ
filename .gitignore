@@ -1,0 +1,21 @@
+# ESP-IDF
+firmware/build/
+firmware/sdkconfig
+firmware/sdkconfig.old
+firmware/managed_components/
+firmware/dependencies.lock
+
+# Host C
+host/receiver/build/
+
+# Python
+__pycache__/
+*.pyc
+.pytest_cache/
+.venv/
+
+# Captures and generated outputs
+*.bin
+*.csv
+*.png
+!docs/**/*.png

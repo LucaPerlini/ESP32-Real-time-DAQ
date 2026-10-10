@@ -1,0 +1,12 @@
+# Baseline configuration. `idf.py build` generates sdkconfig from these.
+CONFIG_IDF_TARGET="esp32"
+
+# Run at full clock for timing headroom.
+CONFIG_ESP_DEFAULT_CPU_FREQ_MHZ_240=y
+
+# 1 ms RTOS tick; keep boot logs on the default console UART.
+CONFIG_FREERTOS_HZ=1000
+CONFIG_ESP_CONSOLE_UART_DEFAULT=y
+
+# Optimise for speed on the acquisition path.
+CONFIG_COMPILER_OPTIMIZATION_PERF=y

@@ -1,0 +1,14 @@
+idf_component_register(
+    SRCS
+        "app_main.c"
+        "daq.c"
+        "signal_source.c"
+        "../../common/crc16.c"
+    INCLUDE_DIRS
+        "."
+        "../../common"
+    REQUIRES
+        driver
+        esp_adc
+        esp_timer
+)

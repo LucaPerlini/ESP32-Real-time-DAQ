@@ -1,0 +1,51 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  host:
+    name: Host build + tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build host receiver
+        run: |
+          cmake -B host/receiver/build -S host/receiver -DCMAKE_BUILD_TYPE=Release
+          cmake --build host/receiver/build
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install Python deps
+        run: pip install -r host/analysis/requirements.txt
+
+      - name: Unit tests
+        run: pytest -q tests/
+
+      - name: End-to-end smoke (simulator -> receiver -> analysis)
+        run: |
+          cd host/analysis
+          python3 simulator.py --blocks 50 --loss 0.01 \
+            | ../receiver/build/rt_receiver --stdin --log /tmp/b.csv --raw /tmp/s.bin
+          python3 analyze.py --log /tmp/b.csv --raw /tmp/s.bin --outdir /tmp
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: analysis-plots
+          path: /tmp/*.png
+
+  firmware:
+    name: ESP-IDF firmware build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build firmware (esp32)
+        uses: espressif/esp-idf-ci-action@v1
+        with:
+          esp_idf_version: v5.4
+          target: esp32
+          path: firmware
